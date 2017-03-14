@@ -9,20 +9,19 @@
   firebase.initializeApp(config);
 
   //to empty all fields after submit
-  function resetForm(){
+  function doEmpty(){
     $('#trainForm')[0].reset();  
-}
-  //init database firebase
+  };
+  //create a database variable for Firebase
   var database = firebase.database();
-
- 
+ //on click event for a train being added
   $("#addTrain").on("click", function(event) {
-    //alert("inside submit");
     event.preventDefault();
     var trainName = $('#trainName').val().trim();
     var trainDestination = $('#trainDestination').val().trim();
     var firstDeparture = $('#firstDeparture').val().trim();
     var tripTime = $('#tripTime').val().trim();
+    console.log(trainName + trainDestination + firstDeparture + tripTime);
 
     //save into firebase
     database.ref().push({
@@ -34,30 +33,38 @@
     //end firebase call
     });
     //need to empty all fields after submit
-    resetForm();
+    doEmpty();
   //End form on click event
   });
   //retrieve values from database
   database.ref().on("child_added", function(childSnapshot){
     var obj = childSnapshot.val();
-    var nextArrival = moment().diff(moment(obj.startDate), "months");
-    var minutesAway = months * obj.monthlyRate;
-    console.log(nextArrival);
-    console.log(minutesAway);
+    //set a variable the current time
+    var currentTime = moment();
+    var convertedFirstDeparture = moment(obj.firstDeparture, 'HH:mm').subtract(1, 'years');
+      //console.log(convertedFirstDeparture);
+    var elapsedTime = currentTime.diff(moment(convertedFirstDeparture), "minutes")
+      //console.log('Elapsed Time ' + moment(elapsedTime).format('HH:mm'));
+    var remainderMinutes = (elapsedTime % obj.tripTime);
+      //console.log('Remainder Minutes ' + remainderMinutes);
+    var minutesAway = (obj.tripTime - remainderMinutes);
+      //console.log('Minutes Away ' + minutesAway);
+    var nextTrain = moment().add(minutesAway, "minutes");
+      //console.log('Next Arrival ' + nextTrain);
+    var nextArrival = (moment(nextTrain).format('HH:mm'));
+
 
   $('#trainTable tr:last').after('<tr><td>'+ obj.trainName +
                                  '</td><td>'+ obj.trainDestination +
                                  '</td><td>'+ obj.tripTime +
                                  '</td><td>'+ nextArrival +
                                  '</td><td>'+ minutesAway);
-
-
-
-  }, function(errorObject) {
+  }, 
+  //error checking
+  function(errorObject) {
   console.log("The read failed: " + errorObject.code);
   }
   //End on child added function
   );
-
 
 
