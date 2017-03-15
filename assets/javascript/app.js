@@ -15,13 +15,14 @@
   //create a database variable for Firebase
   var database = firebase.database();
  //on click event for a train being added
-  $("#addTrain").on("click", function(event) {
+  $(document).on('click','#addTrain', function(event) {
+    console.log("clicked");
     event.preventDefault();
     var trainName = $('#trainName').val().trim();
     var trainDestination = $('#trainDestination').val().trim();
     var firstDeparture = $('#firstDeparture').val().trim();
     var tripTime = $('#tripTime').val().trim();
-    console.log(trainName + trainDestination + firstDeparture + tripTime);
+    //console.log(trainName + trainDestination + firstDeparture + tripTime);
 
     //save into firebase
     database.ref().push({
@@ -66,5 +67,3 @@
   }
   //End on child added function
   );
-
-

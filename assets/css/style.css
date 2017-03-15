@@ -1,0 +1,16 @@
+body {
+	font-family: 'Oswald', sans-serif;
+	font-family: 'Francois One', sans-serif;
+	font-family: 'Russo One', sans-serif;
+
+}
+
+.jumbotron {
+	text-align: center;
+	background-image: url("../images/train_girl.gif");
+	background-size: cover;
+}
+
+th,td {
+	text-align: center;
+}
